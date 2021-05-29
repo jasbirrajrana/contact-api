@@ -7,11 +7,11 @@ export class Contact {
   _id: string;
 
   @Field()
-  @Prop({ type: () => String, required: true, unique: true })
+  @Prop({ type: () => String, required: true, unique: false })
   name: string;
 
   @Field()
-  @Prop({ type: () => String, required: true })
+  @Prop({ type: () => String, required: true, unique: true })
   email: string;
 
   @Field()

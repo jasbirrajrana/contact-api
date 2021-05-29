@@ -82,4 +82,30 @@ export class ContactResolver {
 
     return contacts;
   }
+
+  @Query(() => [Contact])
+  async searchContact(
+    @Arg("keyword", () => String) keyword: string,
+    @Arg("page", () => Number, { defaultValue: 1 }) page: number
+  ) {
+    let resultPerPage = 10;
+    page = page - 1;
+
+    let searchingOnject = keyword
+      ? {
+          email: {
+            $regex: keyword,
+            $options: "i",
+          },
+        }
+      : {};
+    let contacts = await ContactModel.find({ ...searchingOnject })
+      .limit(resultPerPage)
+      .skip(resultPerPage * page);
+
+    if (!contacts) {
+      throw new Error("Contact not found!");
+    }
+    return contacts;
+  }
 }
