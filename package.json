@@ -9,6 +9,9 @@
     "test": "jest"
   },
   "devDependencies": {
+    "@types/bluebird": "^3.5.35",
+    "@types/connect-redis": "^0.0.16",
+    "@types/ioredis": "^4.26.4",
     "@types/jest": "^26.0.23",
     "@types/node": "^15.6.1",
     "@types/random-name": "^0.1.0",
@@ -23,13 +26,18 @@
     "apollo-server-express": "^2.25.0",
     "argon2": "^0.27.2",
     "axios": "^0.21.1",
+    "bluebird": "^3.7.2",
     "class-validator": "^0.13.1",
+    "connect-redis": "^5.2.0",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "express-session": "^1.17.2",
     "graphql": "^15.5.0",
+    "ioredis": "^4.27.3",
     "mongoose": "^5.12.12",
     "random-name": "^0.1.2",
+    "redis": "^3.1.2",
     "reflect-metadata": "^0.1.13",
     "shortid": "^2.2.16",
     "type-graphql": "^1.1.1"

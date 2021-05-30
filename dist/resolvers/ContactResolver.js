@@ -43,12 +43,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ContactResolver = void 0;
 const ContactSchema_1 = __importStar(require("../schema/ContactSchema"));
 const type_graphql_1 = require("type-graphql");
+const isAuth_1 = require("../middlewares/isAuth");
 let ContactResolver = class ContactResolver {
-    createContact(name, email) {
+    createContact(name, email, { req, res }) {
         return __awaiter(this, void 0, void 0, function* () {
             const contact = yield ContactSchema_1.default.create({
                 name,
                 email,
+                author: req.session.userId,
             });
             if (!contact) {
                 return false;
@@ -56,15 +58,20 @@ let ContactResolver = class ContactResolver {
             return true;
         });
     }
-    getContacts() {
+    getContacts({ req, res }) {
         return __awaiter(this, void 0, void 0, function* () {
-            const contacts = yield ContactSchema_1.default.find({});
+            const contacts = yield ContactSchema_1.default.find({
+                author: req.session.userId,
+            });
             return contacts;
         });
     }
-    updateContact(email, name) {
+    updateContact(email, name, { req, res }) {
         return __awaiter(this, void 0, void 0, function* () {
-            const contact = yield ContactSchema_1.default.findOne({ email });
+            const contact = yield ContactSchema_1.default.findOne({
+                email,
+                author: req.session.userId,
+            });
             if (!contact) {
                 throw new Error("contact not found!");
             }
@@ -76,9 +83,12 @@ let ContactResolver = class ContactResolver {
             return updatedContact;
         });
     }
-    deleteContact(email) {
+    deleteContact(email, { req, res }) {
         return __awaiter(this, void 0, void 0, function* () {
-            const contact = yield ContactSchema_1.default.findOne({ email });
+            const contact = yield ContactSchema_1.default.findOne({
+                email,
+                author: req.session.userId,
+            });
             if (!contact) {
                 throw new Error("Contact not found!");
             }
@@ -95,25 +105,31 @@ let ContactResolver = class ContactResolver {
             return true;
         });
     }
-    getContactByName(name) {
+    getContactByName(name, { req, res }) {
         return __awaiter(this, void 0, void 0, function* () {
-            const contacts = yield ContactSchema_1.default.find({ name });
+            const contacts = yield ContactSchema_1.default.find({
+                name,
+                author: req.session.userId,
+            });
             if (!contacts) {
                 throw new Error("Contacts not found!");
             }
             return contacts;
         });
     }
-    getContactByEmail(email) {
+    getContactByEmail(email, { req, res }) {
         return __awaiter(this, void 0, void 0, function* () {
-            const contacts = yield ContactSchema_1.default.find({ email });
+            const contacts = yield ContactSchema_1.default.find({
+                email,
+                author: req.session.userId,
+            });
             if (!contacts) {
                 throw new Error("Contacts not found!");
             }
             return contacts;
         });
     }
-    searchContact(keyword, page) {
+    searchContact(keyword, page, { req, res }) {
         return __awaiter(this, void 0, void 0, function* () {
             let resultPerPage = 10;
             page = page - 1;
@@ -123,6 +139,7 @@ let ContactResolver = class ContactResolver {
                         $regex: keyword,
                         $options: "i",
                     },
+                    author: req.session.userId,
                 }
                 : {};
             let contacts = yield ContactSchema_1.default.find(Object.assign({}, searchingOnject))
@@ -137,53 +154,67 @@ let ContactResolver = class ContactResolver {
 };
 __decorate([
     type_graphql_1.Mutation(() => Boolean),
+    type_graphql_1.UseMiddleware(isAuth_1.isAuth),
     __param(0, type_graphql_1.Arg("name", () => String)),
     __param(1, type_graphql_1.Arg("email", () => String)),
+    __param(2, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:paramtypes", [String, String, Object]),
     __metadata("design:returntype", Promise)
 ], ContactResolver.prototype, "createContact", null);
 __decorate([
     type_graphql_1.Query(() => [ContactSchema_1.Contact]),
+    type_graphql_1.UseMiddleware(isAuth_1.isAuth),
+    __param(0, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], ContactResolver.prototype, "getContacts", null);
 __decorate([
     type_graphql_1.Mutation(() => ContactSchema_1.Contact),
+    type_graphql_1.UseMiddleware(isAuth_1.isAuth),
     __param(0, type_graphql_1.Arg("email", () => String)),
     __param(1, type_graphql_1.Arg("name", () => String)),
+    __param(2, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:paramtypes", [String, String, Object]),
     __metadata("design:returntype", Promise)
 ], ContactResolver.prototype, "updateContact", null);
 __decorate([
     type_graphql_1.Mutation(() => Boolean),
+    type_graphql_1.UseMiddleware(isAuth_1.isAuth),
     __param(0, type_graphql_1.Arg("email", () => String)),
+    __param(1, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], ContactResolver.prototype, "deleteContact", null);
 __decorate([
     type_graphql_1.Query(() => [ContactSchema_1.Contact]),
+    type_graphql_1.UseMiddleware(isAuth_1.isAuth),
     __param(0, type_graphql_1.Arg("name", () => String)),
+    __param(1, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], ContactResolver.prototype, "getContactByName", null);
 __decorate([
     type_graphql_1.Query(() => [ContactSchema_1.Contact]),
+    type_graphql_1.UseMiddleware(isAuth_1.isAuth),
     __param(0, type_graphql_1.Arg("email", () => String)),
+    __param(1, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], ContactResolver.prototype, "getContactByEmail", null);
 __decorate([
     type_graphql_1.Query(() => [ContactSchema_1.Contact]),
+    type_graphql_1.UseMiddleware(isAuth_1.isAuth),
     __param(0, type_graphql_1.Arg("keyword", () => String)),
     __param(1, type_graphql_1.Arg("page", () => Number, { defaultValue: 1 })),
+    __param(2, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Number]),
+    __metadata("design:paramtypes", [String, Number, Object]),
     __metadata("design:returntype", Promise)
 ], ContactResolver.prototype, "searchContact", null);
 ContactResolver = __decorate([

@@ -1,13 +1,38 @@
-import UserModel from "../schema/UserSchema";
+import UserModel, { User } from "../schema/UserSchema";
 import * as argon2 from "argon2";
 import { UserResponse } from "../types/UserResponse";
-import { Arg, Mutation } from "type-graphql";
+import { Arg, Ctx, Mutation, Query } from "type-graphql";
+import { ctx } from "../types/MyContext";
+import { COOKIE_NAME } from "../types/constants";
 export class UserResolver {
+  @Mutation(() => Boolean)
+  logout(@Ctx() { req, res }: ctx) {
+    return new Promise((resolve) =>
+      req.session.destroy((err: any) => {
+        res.clearCookie(COOKIE_NAME);
+        if (err) {
+          console.log(err);
+          resolve(false);
+          return;
+        }
+        resolve(true);
+      })
+    );
+  }
+  @Query(() => User, { nullable: true })
+  me(@Ctx() { req }: ctx) {
+    if (!req.session.userId) {
+      return null;
+    }
+    console.log(req.session.userId);
+    return UserModel.findById(req.session.userId);
+  }
   @Mutation(() => UserResponse)
   async register(
     @Arg("name", () => String) name: string,
     @Arg("email", () => String) email: string,
-    @Arg("password", () => String) password: string
+    @Arg("password", () => String) password: string,
+    @Ctx() { req, res }: ctx
   ): Promise<UserResponse> {
     let isUserExist = await UserModel.findOne({ email });
 
@@ -44,13 +69,15 @@ export class UserResolver {
     } catch (error) {
       throw new Error(error);
     }
+    req.session.userId = user._id;
     return { user };
   }
 
   @Mutation(() => UserResponse)
   async login(
     @Arg("email", () => String) email: string,
-    @Arg("password", () => String) password: string
+    @Arg("password", () => String) password: string,
+    @Ctx() { req, res }: ctx
   ): Promise<UserResponse> {
     const userExist = await UserModel.findOne({ email });
     if (userExist === null) {
@@ -74,7 +101,9 @@ export class UserResolver {
         ],
       };
     }
-
+    console.log(userExist);
+    req.session.userId = userExist._id;
+    console.log(req.session);
     return {
       user: userExist,
     };

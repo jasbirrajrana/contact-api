@@ -39,17 +39,33 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserResolver = void 0;
-const UserSchema_1 = __importDefault(require("../schema/UserSchema"));
+const UserSchema_1 = __importStar(require("../schema/UserSchema"));
 const argon2 = __importStar(require("argon2"));
 const UserResponse_1 = require("../types/UserResponse");
 const type_graphql_1 = require("type-graphql");
+const constants_1 = require("../types/constants");
 class UserResolver {
-    register(name, email, password) {
+    logout({ req, res }) {
+        return new Promise((resolve) => req.session.destroy((err) => {
+            res.clearCookie(constants_1.COOKIE_NAME);
+            if (err) {
+                console.log(err);
+                resolve(false);
+                return;
+            }
+            resolve(true);
+        }));
+    }
+    me({ req }) {
+        if (!req.session.userId) {
+            return null;
+        }
+        console.log(req.session.userId);
+        return UserSchema_1.default.findById(req.session.userId);
+    }
+    register(name, email, password, { req, res }) {
         return __awaiter(this, void 0, void 0, function* () {
             let isUserExist = yield UserSchema_1.default.findOne({ email });
             if (isUserExist) {
@@ -84,10 +100,11 @@ class UserResolver {
             catch (error) {
                 throw new Error(error);
             }
+            req.session.userId = user._id;
             return { user };
         });
     }
-    login(email, password) {
+    login(email, password, { req, res }) {
         return __awaiter(this, void 0, void 0, function* () {
             const userExist = yield UserSchema_1.default.findOne({ email });
             if (userExist === null) {
@@ -111,6 +128,9 @@ class UserResolver {
                     ],
                 };
             }
+            console.log(userExist);
+            req.session.userId = userExist._id;
+            console.log(req.session);
             return {
                 user: userExist,
             };
@@ -118,20 +138,36 @@ class UserResolver {
     }
 }
 __decorate([
+    type_graphql_1.Mutation(() => Boolean),
+    __param(0, type_graphql_1.Ctx()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], UserResolver.prototype, "logout", null);
+__decorate([
+    type_graphql_1.Query(() => UserSchema_1.User, { nullable: true }),
+    __param(0, type_graphql_1.Ctx()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], UserResolver.prototype, "me", null);
+__decorate([
     type_graphql_1.Mutation(() => UserResponse_1.UserResponse),
     __param(0, type_graphql_1.Arg("name", () => String)),
     __param(1, type_graphql_1.Arg("email", () => String)),
     __param(2, type_graphql_1.Arg("password", () => String)),
+    __param(3, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:paramtypes", [String, String, String, Object]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "register", null);
 __decorate([
     type_graphql_1.Mutation(() => UserResponse_1.UserResponse),
     __param(0, type_graphql_1.Arg("email", () => String)),
     __param(1, type_graphql_1.Arg("password", () => String)),
+    __param(2, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:paramtypes", [String, String, Object]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "login", null);
 exports.UserResolver = UserResolver;

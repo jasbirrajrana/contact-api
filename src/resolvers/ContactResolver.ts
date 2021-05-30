@@ -1,16 +1,28 @@
 import ContactModel, { Contact } from "../schema/ContactSchema";
-import { Arg, Mutation, ObjectType, Query } from "type-graphql";
+import {
+  Arg,
+  Ctx,
+  Mutation,
+  ObjectType,
+  Query,
+  UseMiddleware,
+} from "type-graphql";
+import { ctx } from "../types/MyContext";
+import { isAuth } from "../middlewares/isAuth";
 
 @ObjectType()
 export class ContactResolver {
   @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
   async createContact(
     @Arg("name", () => String) name: string,
-    @Arg("email", () => String) email: string
+    @Arg("email", () => String) email: string,
+    @Ctx() { req, res }: ctx
   ): Promise<boolean> {
     const contact = await ContactModel.create({
       name,
       email,
+      author: req.session.userId,
     });
     if (!contact) {
       return false;
@@ -18,17 +30,26 @@ export class ContactResolver {
     return true;
   }
   @Query(() => [Contact])
-  async getContacts() {
-    const contacts = await ContactModel.find({});
+  @UseMiddleware(isAuth)
+  async getContacts(@Ctx() { req, res }: ctx) {
+    const contacts = await ContactModel.find({
+      author: req.session.userId,
+    });
     return contacts;
   }
 
   @Mutation(() => Contact)
+  @UseMiddleware(isAuth)
   async updateContact(
     @Arg("email", () => String) email: string,
-    @Arg("name", () => String) name: string
+    @Arg("name", () => String) name: string,
+    @Ctx() { req, res }: ctx
   ) {
-    const contact = await ContactModel.findOne({ email });
+    const contact = await ContactModel.findOne({
+      email,
+      author: req.session.userId,
+    });
+
     if (!contact) {
       throw new Error("contact not found!");
     }
@@ -43,10 +64,15 @@ export class ContactResolver {
   }
 
   @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
   async deleteContact(
-    @Arg("email", () => String) email: string
+    @Arg("email", () => String) email: string,
+    @Ctx() { req, res }: ctx
   ): Promise<boolean> {
-    const contact = await ContactModel.findOne({ email });
+    const contact = await ContactModel.findOne({
+      email,
+      author: req.session.userId,
+    });
 
     if (!contact) {
       throw new Error("Contact not found!");
@@ -62,8 +88,15 @@ export class ContactResolver {
     return true;
   }
   @Query(() => [Contact])
-  async getContactByName(@Arg("name", () => String) name: string) {
-    const contacts = await ContactModel.find({ name });
+  @UseMiddleware(isAuth)
+  async getContactByName(
+    @Arg("name", () => String) name: string,
+    @Ctx() { req, res }: ctx
+  ) {
+    const contacts = await ContactModel.find({
+      name,
+      author: req.session.userId,
+    });
 
     if (!contacts) {
       throw new Error("Contacts not found!");
@@ -73,8 +106,15 @@ export class ContactResolver {
   }
 
   @Query(() => [Contact])
-  async getContactByEmail(@Arg("email", () => String) email: string) {
-    const contacts = await ContactModel.find({ email });
+  @UseMiddleware(isAuth)
+  async getContactByEmail(
+    @Arg("email", () => String) email: string,
+    @Ctx() { req, res }: ctx
+  ) {
+    const contacts = await ContactModel.find({
+      email,
+      author: req.session.userId,
+    });
 
     if (!contacts) {
       throw new Error("Contacts not found!");
@@ -84,9 +124,11 @@ export class ContactResolver {
   }
 
   @Query(() => [Contact])
+  @UseMiddleware(isAuth)
   async searchContact(
     @Arg("keyword", () => String) keyword: string,
-    @Arg("page", () => Number, { defaultValue: 1 }) page: number
+    @Arg("page", () => Number, { defaultValue: 1 }) page: number,
+    @Ctx() { req, res }: ctx
   ) {
     let resultPerPage = 10;
     page = page - 1;
@@ -97,6 +139,7 @@ export class ContactResolver {
             $regex: keyword,
             $options: "i",
           },
+          author: req.session.userId,
         }
       : {};
     let contacts = await ContactModel.find({ ...searchingOnject })

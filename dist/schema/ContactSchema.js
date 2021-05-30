@@ -12,12 +12,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Contact = void 0;
 const typegoose_1 = require("@typegoose/typegoose");
 const type_graphql_1 = require("type-graphql");
+const UserSchema_1 = require("./UserSchema");
 let Contact = class Contact {
 };
 __decorate([
     type_graphql_1.Field(),
     __metadata("design:type", String)
 ], Contact.prototype, "_id", void 0);
+__decorate([
+    type_graphql_1.Field((_type) => UserSchema_1.User),
+    typegoose_1.Prop({ ref: UserSchema_1.User, required: true }),
+    __metadata("design:type", String)
+], Contact.prototype, "author", void 0);
 __decorate([
     type_graphql_1.Field(),
     typegoose_1.Prop({ type: () => String, required: true, unique: false }),
