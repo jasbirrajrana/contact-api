@@ -27,6 +27,7 @@ const constants_1 = require("./types/constants");
 (() => __awaiter(void 0, void 0, void 0, function* () {
     const RedisStore = connect_redis_1.default(express_session_1.default);
     const app = express_1.default();
+    app.set("trust proxy", 1);
     app.use(express_session_1.default({
         name: constants_1.COOKIE_NAME,
         store: new RedisStore({ client: redisConfig_1.client, disableTouch: true }),
