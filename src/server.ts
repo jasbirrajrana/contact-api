@@ -22,6 +22,7 @@ import { COOKIE_NAME, __prod__ } from "./types/constants";
         httpOnly: true,
         sameSite: "lax",
         secure: __prod__,
+        domain: "contact-book-apii",
       },
       secret: process.env.SESSION_SECRET!,
       saveUninitialized: false,

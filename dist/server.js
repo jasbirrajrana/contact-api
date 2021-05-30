@@ -35,6 +35,7 @@ const constants_1 = require("./types/constants");
             httpOnly: true,
             sameSite: "lax",
             secure: constants_1.__prod__,
+            domain: "contact-book-apii",
         },
         secret: process.env.SESSION_SECRET,
         saveUninitialized: false,
