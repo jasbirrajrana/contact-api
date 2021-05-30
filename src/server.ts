@@ -5,12 +5,14 @@ import { buildSchema } from "type-graphql";
 import { HelloResolver } from "./resolvers/HelloResolver";
 import { connect } from "./config/db";
 import { ContactResolver } from "./resolvers/ContactResolver";
+import { UserResolver } from "./resolvers/UserResolver";
+
 (async () => {
   const app = express();
   const port: any = process.env.PORT! || 4000;
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver, ContactResolver],
+      resolvers: [HelloResolver, ContactResolver, UserResolver],
     }),
     playground: true,
     introspection: true,

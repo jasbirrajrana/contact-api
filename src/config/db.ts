@@ -11,8 +11,11 @@ const connect = async () => {
 
     console.log("mongo connected!");
   } catch (error) {
-    console.log(error);
     process.exit(1);
   }
 };
-export { connect };
+
+const closeDbConnection = async () => {
+  await mongoose.connection.close().catch((error) => console.error(error));
+};
+export { connect, closeDbConnection };

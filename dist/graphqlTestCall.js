@@ -12,25 +12,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.closeDbConnection = exports.connect = void 0;
-const mongoose_1 = __importDefault(require("mongoose"));
-const connect = () => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        yield mongoose_1.default.connect(process.env.MONGO_URI, {
-            useCreateIndex: true,
-            useNewUrlParser: true,
-            useFindAndModify: true,
-            useUnifiedTopology: true,
-        });
-        console.log("mongo connected!");
-    }
-    catch (error) {
-        process.exit(1);
-    }
+exports.graphqlTestCall = void 0;
+const graphql_1 = __importDefault(require("graphql"));
+const type_graphql_1 = require("type-graphql");
+const ContactResolver_1 = require("./resolvers/ContactResolver");
+const HelloResolver_1 = require("./resolvers/HelloResolver");
+let schema;
+(() => __awaiter(void 0, void 0, void 0, function* () {
+    schema = yield type_graphql_1.buildSchema({
+        resolvers: [HelloResolver_1.HelloResolver, ContactResolver_1.ContactResolver],
+    });
+}))();
+const graphqlTestCall = (query, variables) => __awaiter(void 0, void 0, void 0, function* () {
+    return graphql_1.default(schema, query, {
+        variables,
+    });
 });
-exports.connect = connect;
-const closeDbConnection = () => __awaiter(void 0, void 0, void 0, function* () {
-    yield mongoose_1.default.connection.close().catch((error) => console.error(error));
-});
-exports.closeDbConnection = closeDbConnection;
-//# sourceMappingURL=db.js.map
+exports.graphqlTestCall = graphqlTestCall;
+//# sourceMappingURL=graphqlTestCall.js.map

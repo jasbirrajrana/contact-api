@@ -1,0 +1,1 @@
+{"version":3,"file":"createSchema.js","sourceRoot":"","sources":["../../src/utils/createSchema.ts"],"names":[],"mappings":";;;;;;;;;;;;AAAA,kEAA+D;AAC/D,8DAA2D;AAC3D,+CAA2C;AAEpC,MAAM,YAAY,GAAG,GAAS,EAAE;IACrC,MAAM,0BAAW,CAAC;QAChB,SAAS,EAAE,CAAC,6BAAa,EAAE,iCAAe,CAAC;KAC5C,CAAC,CAAC;AACL,CAAC,CAAA,CAAC;AAJW,QAAA,YAAY,gBAIvB"}

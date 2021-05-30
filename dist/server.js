@@ -19,12 +19,13 @@ const type_graphql_1 = require("type-graphql");
 const HelloResolver_1 = require("./resolvers/HelloResolver");
 const db_1 = require("./config/db");
 const ContactResolver_1 = require("./resolvers/ContactResolver");
+const UserResolver_1 = require("./resolvers/UserResolver");
 (() => __awaiter(void 0, void 0, void 0, function* () {
     const app = express_1.default();
     const port = process.env.PORT || 4000;
     const apolloServer = new apollo_server_express_1.ApolloServer({
         schema: yield type_graphql_1.buildSchema({
-            resolvers: [HelloResolver_1.HelloResolver, ContactResolver_1.ContactResolver],
+            resolvers: [HelloResolver_1.HelloResolver, ContactResolver_1.ContactResolver, UserResolver_1.UserResolver],
         }),
         playground: true,
         introspection: true,
