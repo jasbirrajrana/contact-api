@@ -13,7 +13,7 @@ import { COOKIE_NAME, __prod__ } from "./types/constants";
 (async () => {
   const RedisStore = connectRedis(session);
   const app = express();
-  app.set("trust proxy", 1);
+  app.set("trust proxy", true);
   app.use(
     session({
       name: COOKIE_NAME,
