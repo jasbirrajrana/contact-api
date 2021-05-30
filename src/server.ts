@@ -26,7 +26,7 @@ import { COOKIE_NAME, __prod__ } from "./types/constants";
         httpOnly: true,
         sameSite: "lax",
         secure: true,
-        domain: "https://contact-book-apii.herokuapp.com/",
+        domain: __prod__ ? "contact-book-apii.herokuapp.com" : undefined,
       },
       secret: process.env.SESSION_SECRET!,
       saveUninitialized: false,

@@ -38,7 +38,7 @@ const constants_1 = require("./types/constants");
             httpOnly: true,
             sameSite: "lax",
             secure: true,
-            domain: "https://contact-book-apii.herokuapp.com/",
+            domain: constants_1.__prod__ ? "contact-book-apii.herokuapp.com" : undefined,
         },
         secret: process.env.SESSION_SECRET,
         saveUninitialized: false,
