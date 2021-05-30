@@ -9,10 +9,13 @@ import { ContactResolver } from "./resolvers/ContactResolver";
 import { UserResolver } from "./resolvers/UserResolver";
 import connectRedis from "connect-redis";
 import { client } from "./utils/redisConfig";
+import cors from "cors";
 import { COOKIE_NAME, __prod__ } from "./types/constants";
 (async () => {
   const RedisStore = connectRedis(session);
   const app = express();
+  app.use(cors());
+
   app.set("trust proxy", true);
   app.use(
     session({
@@ -23,7 +26,7 @@ import { COOKIE_NAME, __prod__ } from "./types/constants";
         httpOnly: true,
         sameSite: "lax",
         secure: __prod__,
-        domain: "contact-book-apii",
+        domain: "https://contact-book-apii.herokuapp.com/",
       },
       secret: process.env.SESSION_SECRET!,
       saveUninitialized: false,

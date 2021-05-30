@@ -23,10 +23,12 @@ const ContactResolver_1 = require("./resolvers/ContactResolver");
 const UserResolver_1 = require("./resolvers/UserResolver");
 const connect_redis_1 = __importDefault(require("connect-redis"));
 const redisConfig_1 = require("./utils/redisConfig");
+const cors_1 = __importDefault(require("cors"));
 const constants_1 = require("./types/constants");
 (() => __awaiter(void 0, void 0, void 0, function* () {
     const RedisStore = connect_redis_1.default(express_session_1.default);
     const app = express_1.default();
+    app.use(cors_1.default());
     app.set("trust proxy", true);
     app.use(express_session_1.default({
         name: constants_1.COOKIE_NAME,
@@ -36,7 +38,7 @@ const constants_1 = require("./types/constants");
             httpOnly: true,
             sameSite: "lax",
             secure: constants_1.__prod__,
-            domain: "contact-book-apii",
+            domain: "https://contact-book-apii.herokuapp.com/",
         },
         secret: process.env.SESSION_SECRET,
         saveUninitialized: false,
