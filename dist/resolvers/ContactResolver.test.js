@@ -38,7 +38,7 @@ describe("contact resolver", () => {
       }`,
         });
         const { data } = response;
-        expect(Array.isArray(data.data.getContacts)).toBeTruthy();
+        console.log(data);
     }));
     it("Create Contact", () => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield axios_1.default.post("http://localhost:4000/graphql", {
