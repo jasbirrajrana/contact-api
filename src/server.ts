@@ -17,6 +17,7 @@ import { COOKIE_NAME, __prod__ } from "./types/constants";
   app.use(cors());
 
   app.set("trust proxy", true);
+  app.enable("trust proxy");
   app.use(
     session({
       name: COOKIE_NAME,
@@ -25,8 +26,8 @@ import { COOKIE_NAME, __prod__ } from "./types/constants";
         maxAge: 1000 * 60 * 60 * 24 * 365 * 10,
         httpOnly: true,
         sameSite: "lax",
-        secure: false,
-        // domain: ".herokuapp.com",
+        secure: __prod__,
+        domain: ".herokuapp.com",
       },
       secret: process.env.SESSION_SECRET!,
       saveUninitialized: false,

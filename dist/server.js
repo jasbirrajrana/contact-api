@@ -30,6 +30,7 @@ const constants_1 = require("./types/constants");
     const app = express_1.default();
     app.use(cors_1.default());
     app.set("trust proxy", true);
+    app.enable("trust proxy");
     app.use(express_session_1.default({
         name: constants_1.COOKIE_NAME,
         store: new RedisStore({ client: redisConfig_1.client, disableTouch: true }),
@@ -37,7 +38,8 @@ const constants_1 = require("./types/constants");
             maxAge: 1000 * 60 * 60 * 24 * 365 * 10,
             httpOnly: true,
             sameSite: "lax",
-            secure: false,
+            secure: constants_1.__prod__,
+            domain: ".herokuapp.com",
         },
         secret: process.env.SESSION_SECRET,
         saveUninitialized: false,
