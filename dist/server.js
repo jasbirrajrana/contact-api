@@ -30,7 +30,7 @@ const constants_1 = require("./types/constants");
     const app = express_1.default();
     app.use(cors_1.default({
         credentials: true,
-        origin: "*",
+        origin: "https://contact-book-apii.herokuapp.com/",
     }));
     app.set("trust proxy", true);
     app.enable("trust proxy");

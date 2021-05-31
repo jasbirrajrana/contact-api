@@ -17,7 +17,7 @@ import { COOKIE_NAME, __prod__ } from "./types/constants";
   app.use(
     cors({
       credentials: true,
-      origin: "*",
+      origin: "https://contact-book-apii.herokuapp.com/",
     })
   );
   app.set("trust proxy", true);
