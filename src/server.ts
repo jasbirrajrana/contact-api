@@ -14,14 +14,11 @@ import { COOKIE_NAME, __prod__ } from "./types/constants";
 (async () => {
   const RedisStore = connectRedis(session);
   const app = express();
-  app.use(
-    cors({
-      credentials: true,
-      origin: "https://contact-book-apii.herokuapp.com/",
-    })
-  );
-  app.set("trust proxy", true);
-  app.enable("trust proxy");
+  if (__prod__) {
+    app.set("trust proxy", 1);
+  }
+
+  app.use(cors());
   app.use(
     session({
       name: COOKIE_NAME,
@@ -29,9 +26,8 @@ import { COOKIE_NAME, __prod__ } from "./types/constants";
       cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 365 * 10,
         httpOnly: true,
-        sameSite: "none",
+        sameSite: "lax",
         secure: __prod__,
-        domain: ".herokuapp.com",
       },
       secret: process.env.SESSION_SECRET!,
       saveUninitialized: false,
