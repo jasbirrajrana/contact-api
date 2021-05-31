@@ -28,7 +28,10 @@ const constants_1 = require("./types/constants");
 (() => __awaiter(void 0, void 0, void 0, function* () {
     const RedisStore = connect_redis_1.default(express_session_1.default);
     const app = express_1.default();
-    app.use(cors_1.default());
+    app.use(cors_1.default({
+        credentials: true,
+        origin: "*",
+    }));
     app.set("trust proxy", true);
     app.enable("trust proxy");
     app.use(express_session_1.default({

@@ -14,8 +14,12 @@ import { COOKIE_NAME, __prod__ } from "./types/constants";
 (async () => {
   const RedisStore = connectRedis(session);
   const app = express();
-  app.use(cors());
-
+  app.use(
+    cors({
+      credentials: true,
+      origin: "*",
+    })
+  );
   app.set("trust proxy", true);
   app.enable("trust proxy");
   app.use(
